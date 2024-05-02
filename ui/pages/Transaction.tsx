@@ -8,12 +8,14 @@ import { useAppContext } from 'lib/contexts/app';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { publicClient } from 'lib/web3/client';
-//import TextAd from 'ui/shared/ad/TextAd';
+import isCustomAppError from 'ui/shared/AppError/isCustomAppError';
 import EntityTags from 'ui/shared/EntityTags';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
 import TabsSkeleton from 'ui/shared/Tabs/TabsSkeleton';
 import useTabIndexFromQuery from 'ui/shared/Tabs/useTabIndexFromQuery';
+import TxAssetFlows from 'ui/tx/TxAssetFlows';
+import TxBlobs from 'ui/tx/TxBlobs';
 import TxDetails from 'ui/tx/TxDetails';
 import TxDetailsDegraded from 'ui/tx/TxDetailsDegraded';
 import TxDetailsWrapped from 'ui/tx/TxDetailsWrapped';
@@ -26,6 +28,8 @@ import TxTokenTransfer from 'ui/tx/TxTokenTransfer';
 import TxUserOps from 'ui/tx/TxUserOps';
 import useTxQuery from 'ui/tx/useTxQuery';
 
+const txInterpretation = config.features.txInterpretation;
+
 const TransactionPageContent = () => {
   const router = useRouter();
   const appProps = useAppContext();
@@ -34,7 +38,7 @@ const TransactionPageContent = () => {
   const txQuery = useTxQuery();
   const { data, isPlaceholderData, isError, error, errorUpdateCount } = txQuery;
 
-  const showDegradedView = publicClient && (isError || isPlaceholderData) && errorUpdateCount > 0;
+  const showDegradedView = publicClient && ((isError && error.status !== 422) || isPlaceholderData) && errorUpdateCount > 0;
 
   const tabs: Array<RoutedTab> = (() => {
     const detailsComponent = showDegradedView ?
@@ -47,6 +51,9 @@ const TransactionPageContent = () => {
         title: config.features.suave.isEnabled && data?.wrapped ? 'Confidential compute tx details' : 'Details',
         component: detailsComponent,
       },
+      txInterpretation.isEnabled && txInterpretation.provider === 'noves' ?
+        { id: 'asset_flows', title: 'Asset Flows', component: <TxAssetFlows hash={ hash }/> } :
+        undefined,
       config.features.suave.isEnabled && data?.wrapped ?
         { id: 'wrapped', title: 'Regular tx details', component: <TxDetailsWrapped data={ data.wrapped }/> } :
         undefined,
@@ -55,6 +62,9 @@ const TransactionPageContent = () => {
         { id: 'user_ops', title: 'User operations', component: <TxUserOps txQuery={ txQuery }/> } :
         undefined,
       { id: 'internal', title: 'Internal txns', component: <TxInternals txQuery={ txQuery }/> },
+      config.features.dataAvailability.isEnabled && txQuery.data?.blob_versioned_hashes?.length ?
+        { id: 'blobs', title: 'Blobs', component: <TxBlobs txQuery={ txQuery }/> } :
+        undefined,
       { id: 'logs', title: 'Logs', component: <TxLogs txQuery={ txQuery }/> },
       { id: 'state', title: 'State', component: <TxState txQuery={ txQuery }/> },
       { id: 'raw_trace', title: 'Raw trace', component: <TxRawTrace txQuery={ txQuery }/> },
@@ -99,7 +109,7 @@ const TransactionPageContent = () => {
   })();
 
   if (isError && !showDegradedView) {
-    if (error?.status === 422 || error?.status === 404) {
+    if (isCustomAppError(error)) {
       throwOnResourceLoadError({ resource: 'tx', error, isError: true });
     }
   }

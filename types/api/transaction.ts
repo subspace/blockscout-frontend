@@ -2,10 +2,12 @@ import type { AddressParam } from './addressParams';
 import type { BlockTransactionsResponse } from './block';
 import type { DecodedInput } from './decodedInput';
 import type { Fee } from './fee';
+import type { NovesTxTranslation } from './noves';
 import type { OptimisticL2WithdrawalStatus } from './optimisticL2';
 import type { TokenInfo } from './token';
 import type { TokenTransfer } from './tokenTransfer';
 import type { TxAction } from './txAction';
+import type { ZkSyncBatchesItem } from './zkSyncL2';
 
 export type TransactionRevertReason = {
   raw: string;
@@ -79,9 +81,28 @@ export type Transaction = {
   zkevm_batch_number?: number;
   zkevm_status?: typeof ZKEVM_L2_TX_STATUSES[number];
   zkevm_sequence_hash?: string;
+  // zkSync FIELDS
+  zksync?: Omit<ZkSyncBatchesItem, 'number' | 'tx_count' | 'timestamp'> & {
+    'batch_number': number | null;
+  };
+  // blob tx fields
+  blob_versioned_hashes?: Array<string>;
+  blob_gas_used?: string;
+  blob_gas_price?: string;
+  burnt_blob_fee?: string;
+  max_fee_per_blob_gas?: string;
+  // Noves-fi
+  translation?: NovesTxTranslation;
 }
 
 export const ZKEVM_L2_TX_STATUSES = [ 'Confirmed by Sequencer', 'L1 Confirmed' ];
+
+export interface TransactionsStats {
+  pending_transactions_count: string;
+  transaction_fees_avg_24h: string;
+  transaction_fees_sum_24h: string;
+  transactions_count_24h: string;
+}
 
 export type TransactionsResponse = TransactionsResponseValidated | TransactionsResponsePending;
 
@@ -104,6 +125,15 @@ export interface TransactionsResponsePending {
   } | null;
 }
 
+export interface TransactionsResponseWithBlobs {
+  items: Array<Transaction>;
+  next_page_params: {
+    block_number: number;
+    index: number;
+    items_count: number;
+  } | null;
+}
+
 export interface TransactionsResponseWatchlist {
   items: Array<Transaction>;
   next_page_params: {
@@ -119,7 +149,8 @@ export type TransactionType = 'rootstock_remasc' |
 'contract_creation' |
 'contract_call' |
 'token_creation' |
-'coin_transfer'
+'coin_transfer' |
+'blob_transaction'
 
 export type TxsResponse = TransactionsResponseValidated | TransactionsResponsePending | BlockTransactionsResponse;
 

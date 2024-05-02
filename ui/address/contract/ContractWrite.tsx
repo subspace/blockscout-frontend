@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { useAccount, useWalletClient, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useWalletClient, useSwitchChain } from 'wagmi';
 
 import type { SmartContractWriteMethod } from 'types/api/contract';
 
@@ -19,11 +19,14 @@ import ContractMethodForm from './methodForm/ContractMethodForm';
 import useContractAbi from './useContractAbi';
 import { getNativeCoinValue, prepareAbi } from './utils';
 
-const ContractWrite = () => {
+interface Props {
+  isLoading?: boolean;
+}
+
+const ContractWrite = ({ isLoading }: Props) => {
   const { data: walletClient } = useWalletClient();
-  const { isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetworkAsync } = useSwitchNetwork();
+  const { isConnected, chainId } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
 
   const router = useRouter();
 
@@ -38,21 +41,20 @@ const ContractWrite = () => {
       is_custom_abi: isCustomAbi ? 'true' : 'false',
     },
     queryOptions: {
-      enabled: Boolean(addressHash),
+      enabled: !isLoading,
       refetchOnMount: false,
     },
   });
 
   const contractAbi = useContractAbi({ addressHash, isProxy, isCustomAbi });
 
-  // TODO @tom2drum maybe move this inside the form
   const handleMethodFormSubmit = React.useCallback(async(item: SmartContractWriteMethod, args: Array<unknown>) => {
     if (!isConnected) {
       throw new Error('Wallet is not connected');
     }
 
-    if (chain?.id && String(chain.id) !== config.chain.id) {
-      await switchNetworkAsync?.(Number(config.chain.id));
+    if (chainId && String(chainId) !== config.chain.id) {
+      await switchChainAsync?.({ chainId: Number(config.chain.id) });
     }
 
     if (!contractAbi) {
@@ -87,7 +89,7 @@ const ContractWrite = () => {
     });
 
     return { hash };
-  }, [ isConnected, chain, contractAbi, walletClient, addressHash, switchNetworkAsync ]);
+  }, [ isConnected, chainId, contractAbi, walletClient, addressHash, switchChainAsync ]);
 
   const renderItemContent = React.useCallback((item: SmartContractWriteMethod, index: number, id: number) => {
     return (

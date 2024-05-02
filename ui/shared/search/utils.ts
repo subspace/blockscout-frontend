@@ -3,7 +3,7 @@ import type { MarketplaceAppOverview } from 'types/client/marketplace';
 
 import config from 'configs/app';
 
-export type ApiCategory = 'token' | 'nft' | 'address' | 'public_tag' | 'transaction' | 'block' | 'user_operation';
+export type ApiCategory = 'token' | 'nft' | 'address' | 'public_tag' | 'transaction' | 'block' | 'user_operation' | 'blob' | 'domain';
 export type Category = ApiCategory | 'app';
 
 export type ItemsCategoriesMap =
@@ -17,12 +17,14 @@ export type SearchResultAppItem = {
 
 export const searchCategories: Array<{id: Category; title: string }> = [
   { id: 'app', title: 'DApps' },
+  { id: 'domain', title: 'Names' },
   { id: 'token', title: 'Tokens (ERC-20)' },
   { id: 'nft', title: 'NFTs (ERC-721 & 1155)' },
   { id: 'address', title: 'Addresses' },
   { id: 'public_tag', title: 'Public tags' },
   { id: 'transaction', title: 'Transactions' },
   { id: 'block', title: 'Blocks' },
+  { id: 'blob', title: 'Blobs' },
 ];
 
 if (config.features.userOps.isEnabled) {
@@ -31,6 +33,7 @@ if (config.features.userOps.isEnabled) {
 
 export const searchItemTitles: Record<Category, { itemTitle: string; itemTitleShort: string }> = {
   app: { itemTitle: 'DApp', itemTitleShort: 'App' },
+  domain: { itemTitle: 'Name', itemTitleShort: 'Name' },
   token: { itemTitle: 'Token', itemTitleShort: 'Token' },
   nft: { itemTitle: 'NFT', itemTitleShort: 'NFT' },
   address: { itemTitle: 'Address', itemTitleShort: 'Address' },
@@ -38,6 +41,7 @@ export const searchItemTitles: Record<Category, { itemTitle: string; itemTitleSh
   transaction: { itemTitle: 'Transaction', itemTitleShort: 'Txn' },
   block: { itemTitle: 'Block', itemTitleShort: 'Block' },
   user_operation: { itemTitle: 'User operation', itemTitleShort: 'User op' },
+  blob: { itemTitle: 'Blob', itemTitleShort: 'Blob' },
 };
 
 export function getItemCategory(item: SearchResultItem | SearchResultAppItem): Category | undefined {
@@ -66,6 +70,12 @@ export function getItemCategory(item: SearchResultItem | SearchResultAppItem): C
     }
     case 'user_operation': {
       return 'user_operation';
+    }
+    case 'blob': {
+      return 'blob';
+    }
+    case 'ens_domain': {
+      return 'domain';
     }
   }
 }

@@ -37,6 +37,7 @@ const OG_TYPE_DICT: Record<Route['pathname'], OGPageType> = {
   '/output-roots': 'Root page',
   '/batches': 'Root page',
   '/batches/[number]': 'Regular page',
+  '/blobs/[hash]': 'Regular page',
   '/ops': 'Root page',
   '/op/[hash]': 'Regular page',
   '/404': 'Regular page',
@@ -47,6 +48,8 @@ const OG_TYPE_DICT: Record<Route['pathname'], OGPageType> = {
 
   // service routes, added only to make typescript happy
   '/login': 'Regular page',
+  '/api/metrics': 'Regular page',
+  '/api/log': 'Regular page',
   '/api/media-type': 'Regular page',
   '/api/proxy': 'Regular page',
   '/api/csrf': 'Regular page',

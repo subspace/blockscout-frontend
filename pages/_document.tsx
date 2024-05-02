@@ -3,6 +3,7 @@ import type { DocumentContext } from 'next/document';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import React from 'react';
 
+import logRequestFromBot from 'nextjs/utils/logRequestFromBot';
 import * as serverTiming from 'nextjs/utils/serverTiming';
 
 import config from 'configs/app';
@@ -21,6 +22,8 @@ class MyDocument extends Document {
 
       return result;
     };
+
+    await logRequestFromBot(ctx.req, ctx.res, ctx.pathname);
 
     const initialProps = await Document.getInitialProps(ctx);
 

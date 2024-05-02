@@ -3,8 +3,8 @@ import { getAddress, isAddress, isHex } from 'viem';
 
 import type { SmartContractMethodArgType } from 'types/api/contract';
 
-import type { MatchInt } from './useArgTypeMatchInt';
-import { BYTES_REGEXP, formatBooleanValue } from './utils';
+import type { MatchInt } from './utils';
+import { BYTES_REGEXP } from './utils';
 
 interface Params {
   argType: SmartContractMethodArgType;
@@ -18,13 +18,15 @@ export default function useValidateField({ isOptional, argType, argTypeMatchInt 
     return argType.match(BYTES_REGEXP);
   }, [ argType ]);
 
-  return React.useCallback((value: string | undefined) => {
-    if (!value) {
+  // some values are formatted before they are sent to the validator
+  // see ./useFormatFieldValue.tsx hook
+  return React.useCallback((value: string | boolean | undefined) => {
+    if (value === undefined || value === '') {
       return isOptional ? true : 'Field is required';
     }
 
     if (argType === 'address') {
-      if (!isAddress(value)) {
+      if (typeof value !== 'string' || !isAddress(value)) {
         return 'Invalid address format';
       }
 
@@ -39,13 +41,19 @@ export default function useValidateField({ isOptional, argType, argTypeMatchInt 
     }
 
     if (argTypeMatchInt) {
-      const formattedValue = Number(value.replace(/\s/g, ''));
+      const valueBi = (() => {
+        try {
+          return BigInt(value);
+        } catch (error) {
+          return null;
+        }
+      })();
 
-      if (Object.is(formattedValue, NaN)) {
+      if (typeof value !== 'string' || valueBi === null) {
         return 'Invalid integer format';
       }
 
-      if (formattedValue > argTypeMatchInt.max || formattedValue < argTypeMatchInt.min) {
+      if (valueBi > argTypeMatchInt.max || valueBi < argTypeMatchInt.min) {
         const lowerBoundary = argTypeMatchInt.isUnsigned ? '0' : `-1 * 2 ^ ${ Number(argTypeMatchInt.power) - 1 }`;
         const upperBoundary = argTypeMatchInt.isUnsigned ? `2 ^ ${ argTypeMatchInt.power } - 1` : `2 ^ ${ Number(argTypeMatchInt.power) - 1 } - 1`;
         return `Value should be in range from "${ lowerBoundary }" to "${ upperBoundary }" inclusively`;
@@ -55,9 +63,8 @@ export default function useValidateField({ isOptional, argType, argTypeMatchInt 
     }
 
     if (argType === 'bool') {
-      const formattedValue = formatBooleanValue(value);
-      if (formattedValue === undefined) {
-        return 'Invalid boolean format. Allowed values: 0, 1, true, false';
+      if (typeof value !== 'boolean') {
+        return 'Invalid boolean format. Allowed values: true, false';
       }
     }
 

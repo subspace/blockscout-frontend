@@ -13,12 +13,20 @@ export function ad(): CspDev.DirectiveDescriptor {
       '*.coinzilla.com',
       'https://request-global.czilladx.com',
 
+      // adbutler
+      'servedbyadbutler.com',
+
       // slise
       '*.slise.xyz',
 
       // hype
       'api.hypelab.com',
       '*.ixncdn.com',
+      '*.cloudfront.net',
+
+      //getit
+      'v1.getittech.io',
+      'ipapi.co',
     ],
     'frame-src': [
       // coinzilla
