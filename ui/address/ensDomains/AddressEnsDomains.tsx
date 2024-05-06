@@ -1,4 +1,18 @@
-import { Button, chakra, Flex, Grid, Hide, Popover, PopoverBody, PopoverContent, PopoverTrigger, Show, Skeleton, useDisclosure } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Hide,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Show,
+  Skeleton,
+  useDisclosure,
+  chakra,
+} from '@chakra-ui/react';
 import _clamp from 'lodash/clamp';
 import React from 'react';
 
@@ -12,6 +26,7 @@ import dayjs from 'lib/date/dayjs';
 import EnsEntity from 'ui/shared/entities/ens/EnsEntity';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/LinkInternal';
+import PopoverTriggerTooltip from 'ui/shared/PopoverTriggerTooltip';
 
 interface Props {
   addressHash: string;
@@ -90,37 +105,39 @@ const AddressEnsDomains = ({ addressHash, mainDomainName }: Props) => {
   return (
     <Popover isOpen={ isOpen } onClose={ onClose } placement="bottom-start" isLazy>
       <PopoverTrigger>
-        <Button
-          size="sm"
-          variant="outline"
-          colorScheme="gray"
-          onClick={ onToggle }
-          aria-label="Address domains"
-          fontWeight={ 500 }
-          px={ 2 }
-          h="32px"
-          flexShrink={ 0 }
-        >
-          <IconSvg name="ENS_slim" boxSize={ 5 }/>
-          <Show above="xl">
-            <chakra.span ml={ 1 }>{ totalRecords } Domain{ data.items.length > 1 ? 's' : '' }</chakra.span>
-          </Show>
-          <Hide above="xl">
-            <chakra.span ml={ 1 }>{ totalRecords }</chakra.span>
-          </Hide>
-        </Button>
+        <PopoverTriggerTooltip label="List of names resolved or owned by this address">
+          <Button
+            size="sm"
+            variant="outline"
+            colorScheme="gray"
+            onClick={ onToggle }
+            aria-label="Address domains"
+            fontWeight={ 500 }
+            px={ 2 }
+            h="32px"
+            flexShrink={ 0 }
+          >
+            <IconSvg name="ENS_slim" boxSize={ 5 }/>
+            <Show above="xl">
+              <chakra.span ml={ 1 }>{ totalRecords } Domain{ data.items.length > 1 ? 's' : '' }</chakra.span>
+            </Show>
+            <Hide above="xl">
+              <chakra.span ml={ 1 }>{ totalRecords }</chakra.span>
+            </Hide>
+          </Button>
+        </PopoverTriggerTooltip>
       </PopoverTrigger>
       <PopoverContent w={{ base: '100vw', lg: '500px' }}>
         <PopoverBody px={ 6 } py={ 5 } fontSize="sm" display="flex" flexDir="column" rowGap={ 5 } alignItems="flex-start">
           { mainDomain && (
-            <div>
+            <Box w="100%">
               <chakra.span color="text_secondary" fontSize="xs">Primary*</chakra.span>
               <Flex alignItems="center" fontSize="md" mt={ 2 }>
                 <EnsEntity name={ mainDomain.name } fontWeight={ 600 } noCopy/>
                 { mainDomain.expiry_date &&
                     <chakra.span color="text_secondary" whiteSpace="pre"> (expires { dayjs(mainDomain.expiry_date).fromNow() })</chakra.span> }
               </Flex>
-            </div>
+            </Box>
           ) }
           { ownedDomains.length > 0 && (
             <div>

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/experimental-ct-react';
 import React from 'react';
-import type { WindowProvider } from 'wagmi';
+
+import type { WalletProvider } from 'types/web3';
 
 import * as addressMock from 'mocks/address/address';
 import * as countersMock from 'mocks/address/counters';
@@ -19,6 +20,7 @@ const API_URL_COUNTERS = buildApiUrl('address_counters', { hash: ADDRESS_HASH })
 const API_URL_TOKENS_ERC20 = buildApiUrl('address_tokens', { hash: ADDRESS_HASH }) + '?type=ERC-20';
 const API_URL_TOKENS_ERC721 = buildApiUrl('address_tokens', { hash: ADDRESS_HASH }) + '?type=ERC-721';
 const API_URL_TOKENS_ER1155 = buildApiUrl('address_tokens', { hash: ADDRESS_HASH }) + '?type=ERC-1155';
+const API_URL_TOKENS_ERC404 = buildApiUrl('address_tokens', { hash: ADDRESS_HASH }) + '?type=ERC-404';
 const hooksConfig = {
   router: {
     query: { hash: ADDRESS_HASH },
@@ -69,11 +71,15 @@ test('token', async({ mount, page }) => {
     status: 200,
     body: JSON.stringify(tokensMock.erc1155List),
   }), { times: 1 });
+  await page.route(API_URL_TOKENS_ERC404, async(route) => route.fulfill({
+    status: 200,
+    body: JSON.stringify(tokensMock.erc404List),
+  }), { times: 1 });
 
   await page.evaluate(() => {
     window.ethereum = {
       providers: [ { isMetaMask: true, _events: {} } ],
-    }as WindowProvider;
+    } as WalletProvider;
   });
 
   const component = await mount(

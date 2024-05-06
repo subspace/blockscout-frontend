@@ -31,6 +31,20 @@ export interface SearchResultAddressOrContract {
   };
 }
 
+export interface SearchResultDomain {
+  type: 'ens_domain';
+  name: string | null;
+  address: string;
+  is_smart_contract_verified: boolean;
+  url?: string; // not used by the frontend, we build the url ourselves
+  ens_info: {
+    address_hash: string;
+    expiry_date?: string;
+    name: string;
+    names_count: number;
+  };
+}
+
 export interface SearchResultLabel {
   type: 'label';
   address: string;
@@ -55,6 +69,12 @@ export interface SearchResultTx {
   url?: string; // not used by the frontend, we build the url ourselves
 }
 
+export interface SearchResultBlob {
+  type: 'blob';
+  blob_hash: string;
+  timestamp: null;
+}
+
 export interface SearchResultUserOp {
   type: 'user_operation';
   user_operation_hash: string;
@@ -62,7 +82,8 @@ export interface SearchResultUserOp {
   url?: string; // not used by the frontend, we build the url ourselves
 }
 
-export type SearchResultItem = SearchResultToken | SearchResultAddressOrContract | SearchResultBlock | SearchResultTx | SearchResultLabel | SearchResultUserOp;
+export type SearchResultItem = SearchResultToken | SearchResultAddressOrContract | SearchResultBlock | SearchResultTx | SearchResultLabel | SearchResultUserOp |
+SearchResultBlob | SearchResultDomain;
 
 export interface SearchResult {
   items: Array<SearchResultItem>;
@@ -86,5 +107,5 @@ export interface SearchResultFilters {
 export interface SearchRedirectResult {
   parameter: string | null;
   redirect: boolean;
-  type: 'address' | 'block' | 'transaction' | 'user_operation' | null;
+  type: 'address' | 'block' | 'transaction' | 'user_operation' | 'blob' | null;
 }

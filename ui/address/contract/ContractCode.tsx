@@ -1,20 +1,24 @@
-import { Flex, Skeleton, Button, Grid, GridItem, Alert, Link, chakra, Box } from '@chakra-ui/react';
+import { Flex, Skeleton, Button, Grid, GridItem, Alert, Link, chakra, Box, useColorModeValue } from '@chakra-ui/react';
+import type { UseQueryResult } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
+import type { Channel } from 'phoenix';
 import React from 'react';
 
 import type { SocketMessage } from 'lib/socket/types';
 import type { Address as AddressInfo } from 'types/api/address';
+import type { SmartContract } from 'types/api/contract';
 
 import { route } from 'nextjs-routes';
 
 import config from 'configs/app';
-import useApiQuery, { getResourceKey } from 'lib/api/useApiQuery';
+import type { ResourceError } from 'lib/api/resources';
+import { getResourceKey } from 'lib/api/useApiQuery';
+import { CONTRACT_LICENSES } from 'lib/contracts/licenses';
 import dayjs from 'lib/date/dayjs';
-import useSocketChannel from 'lib/socket/useSocketChannel';
 import useSocketMessage from 'lib/socket/useSocketMessage';
-import * as stubs from 'stubs/contract';
 import DataFetchAlert from 'ui/shared/DataFetchAlert';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
+import Hint from 'ui/shared/Hint';
 import LinkExternal from 'ui/shared/LinkExternal';
 import LinkInternal from 'ui/shared/LinkInternal';
 import RawDataSnippet from 'ui/shared/RawDataSnippet';
@@ -24,8 +28,8 @@ import ContractSourceCode from './ContractSourceCode';
 
 type Props = {
   addressHash?: string;
-  // prop for pw tests only
-  noSocket?: boolean;
+  contractQuery: UseQueryResult<SmartContract, ResourceError<unknown>>;
+  channel: Channel | undefined;
 }
 
 type InfoItemProps = {
@@ -33,30 +37,35 @@ type InfoItemProps = {
   content: string | React.ReactNode;
   className?: string;
   isLoading: boolean;
+  hint?: string;
 }
 
-const InfoItem = chakra(({ label, content, className, isLoading }: InfoItemProps) => (
+const InfoItem = chakra(({ label, content, hint, className, isLoading }: InfoItemProps) => (
   <GridItem display="flex" columnGap={ 6 } wordBreak="break-all" className={ className } alignItems="baseline">
-    <Skeleton isLoaded={ !isLoading } w="170px" flexShrink={ 0 } fontWeight={ 500 }>{ label }</Skeleton>
+    <Skeleton isLoaded={ !isLoading } w="170px" flexShrink={ 0 } fontWeight={ 500 }>
+      <Flex alignItems="center">
+        { label }
+        { hint && (
+          <Hint
+            label={ hint }
+            ml={ 2 }
+            color={ useColorModeValue('gray.600', 'gray.400') }
+            tooltipProps={{ placement: 'bottom' }}
+          />
+        ) }
+      </Flex>
+    </Skeleton>
     <Skeleton isLoaded={ !isLoading }>{ content }</Skeleton>
   </GridItem>
 ));
 
-const ContractCode = ({ addressHash, noSocket }: Props) => {
-  const [ isQueryEnabled, setIsQueryEnabled ] = React.useState(false);
+const ContractCode = ({ addressHash, contractQuery, channel }: Props) => {
   const [ isChangedBytecodeSocket, setIsChangedBytecodeSocket ] = React.useState<boolean>();
 
   const queryClient = useQueryClient();
   const addressInfo = queryClient.getQueryData<AddressInfo>(getResourceKey('address', { pathParams: { hash: addressHash } }));
 
-  const { data, isPlaceholderData, isError } = useApiQuery('contract', {
-    pathParams: { hash: addressHash },
-    queryOptions: {
-      enabled: Boolean(addressHash) && (noSocket || isQueryEnabled),
-      refetchOnMount: false,
-      placeholderData: addressInfo?.is_verified ? stubs.CONTRACT_CODE_VERIFIED : stubs.CONTRACT_CODE_UNVERIFIED,
-    },
-  });
+  const { data, isPlaceholderData, isError } = contractQuery;
 
   const handleChangedBytecodeMessage: SocketMessage.AddressChangedBytecode['handler'] = React.useCallback(() => {
     setIsChangedBytecodeSocket(true);
@@ -71,14 +80,6 @@ const ContractCode = ({ addressHash, noSocket }: Props) => {
     });
   }, [ addressHash, queryClient ]);
 
-  const enableQuery = React.useCallback(() => setIsQueryEnabled(true), []);
-
-  const channel = useSocketChannel({
-    topic: `addresses:${ addressHash?.toLowerCase() }`,
-    isDisabled: !addressHash,
-    onJoin: enableQuery,
-    onSocketError: enableQuery,
-  });
   useSocketMessage({
     channel,
     event: 'changed_bytecode',
@@ -117,6 +118,23 @@ const ContractCode = ({ addressHash, noSocket }: Props) => {
         Verify & publish
     </Button>
   );
+
+  const licenseLink = (() => {
+    if (!data?.license_type) {
+      return null;
+    }
+
+    const license = CONTRACT_LICENSES.find((license) => license.type === data.license_type);
+    if (!license || license.type === 'none') {
+      return null;
+    }
+
+    return (
+      <LinkExternal href={ license.url }>
+        { license.label }
+      </LinkExternal>
+    );
+  })();
 
   const constructorArgs = (() => {
     if (!data?.decoded_constructor_args) {
@@ -233,6 +251,14 @@ const ContractCode = ({ addressHash, noSocket }: Props) => {
           { data.name && <InfoItem label="Contract name" content={ data.name } isLoading={ isPlaceholderData }/> }
           { data.compiler_version && <InfoItem label="Compiler version" content={ data.compiler_version } isLoading={ isPlaceholderData }/> }
           { data.evm_version && <InfoItem label="EVM version" content={ data.evm_version } textTransform="capitalize" isLoading={ isPlaceholderData }/> }
+          { licenseLink && (
+            <InfoItem
+              label="License"
+              content={ licenseLink }
+              hint="License type is entered manually during verification. The initial source code may contain a different license type than the one displayed."
+              isLoading={ isPlaceholderData }
+            />
+          ) }
           { typeof data.optimization_enabled === 'boolean' &&
             <InfoItem label="Optimization enabled" content={ data.optimization_enabled ? 'true' : 'false' } isLoading={ isPlaceholderData }/> }
           { data.optimization_runs && <InfoItem label="Optimization runs" content={ String(data.optimization_runs) } isLoading={ isPlaceholderData }/> }

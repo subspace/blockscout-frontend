@@ -40,6 +40,7 @@ const TEMPLATE_MAP: Record<Route['pathname'], string> = {
   '/output-roots': DEFAULT_TEMPLATE,
   '/batches': DEFAULT_TEMPLATE,
   '/batches/[number]': DEFAULT_TEMPLATE,
+  '/blobs/[hash]': DEFAULT_TEMPLATE,
   '/ops': DEFAULT_TEMPLATE,
   '/op/[hash]': DEFAULT_TEMPLATE,
   '/404': DEFAULT_TEMPLATE,
@@ -50,6 +51,8 @@ const TEMPLATE_MAP: Record<Route['pathname'], string> = {
 
   // service routes, added only to make typescript happy
   '/login': DEFAULT_TEMPLATE,
+  '/api/metrics': DEFAULT_TEMPLATE,
+  '/api/log': DEFAULT_TEMPLATE,
   '/api/media-type': DEFAULT_TEMPLATE,
   '/api/proxy': DEFAULT_TEMPLATE,
   '/api/csrf': DEFAULT_TEMPLATE,

@@ -12,7 +12,6 @@ import throwOnAbsentParamError from 'lib/errors/throwOnAbsentParamError';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { USER_OP } from 'stubs/userOps';
-//import TextAd from 'ui/shared/ad/TextAd';
 import UserOpEntity from 'ui/shared/entities/userOp/UserOpEntity';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
@@ -23,6 +22,7 @@ import TxTokenTransfer from 'ui/tx/TxTokenTransfer';
 import useTxQuery from 'ui/tx/useTxQuery';
 import UserOpDetails from 'ui/userOp/UserOpDetails';
 import UserOpRaw from 'ui/userOp/UserOpRaw';
+import UserOpSubHeading from 'ui/userOp/UserOpSubHeading';
 
 const UserOp = () => {
   const router = useRouter();
@@ -90,7 +90,7 @@ const UserOp = () => {
   throwOnAbsentParamError(hash);
   throwOnResourceLoadError(userOpQuery);
 
-  const titleSecondRow = <UserOpEntity hash={ hash } noLink noCopy={ false } fontWeight={ 500 } fontFamily="heading"/>;
+  const titleSecondRow = <UserOpSubHeading hash={ hash }/>;
 
   return (
     <>

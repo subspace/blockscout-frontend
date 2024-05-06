@@ -3,7 +3,8 @@
 # *****************************
 FROM node:20.11.0-alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat python3 make g++
+RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 ### APP
 # Install dependencies
@@ -69,7 +70,7 @@ RUN cd ./deploy/tools/feature-reporter && yarn build
 
 
 ### ENV VARIABLES CHECKER
-# Copy dependencies and source code, then build 
+# Copy dependencies and source code, then build
 COPY --from=deps /envs-validator/node_modules ./deploy/tools/envs-validator/node_modules
 RUN cd ./deploy/tools/envs-validator && yarn build
 
@@ -117,6 +118,11 @@ RUN ["chmod", "-R", "777", "./public"]
 # Copy ENVs files
 COPY --from=builder /app/.env.registry .
 COPY --from=builder /app/.env .
+
+# Copy ENVs presets
+ARG ENVS_PRESET
+ENV ENVS_PRESET=$ENVS_PRESET
+COPY ./configs/envs ./configs/envs
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing

@@ -1,7 +1,23 @@
-import type { Abi, AbiType } from 'abitype';
+import type { Abi, AbiType, AbiFallback, AbiFunction, AbiReceive } from 'abitype';
 
 export type SmartContractMethodArgType = AbiType;
 export type SmartContractMethodStateMutability = 'view' | 'nonpayable' | 'payable';
+
+export type SmartContractLicenseType =
+'none' |
+'unlicense' |
+'mit' |
+'gnu_gpl_v2' |
+'gnu_gpl_v3' |
+'gnu_lgpl_v2_1' |
+'gnu_lgpl_v3' |
+'bsd_2_clause' |
+'bsd_3_clause' |
+'mpl_2_0' |
+'osl_3_0' |
+'apache_2_0' |
+'gnu_agpl_v3' |
+'bsl_1_1';
 
 export interface SmartContract {
   deployed_bytecode: string | null;
@@ -17,6 +33,14 @@ export interface SmartContract {
   is_verified: boolean | null;
   is_verified_via_eth_bytecode_db: boolean | null;
   is_changed_bytecode: boolean | null;
+
+  has_methods_read: boolean;
+  has_methods_read_proxy: boolean;
+  has_methods_write: boolean;
+  has_methods_write_proxy: boolean;
+  has_custom_methods_read: boolean;
+  has_custom_methods_write: boolean;
+
   // sourcify info >>>
   is_verified_via_sourcify: boolean | null;
   is_fully_verified: boolean | null;
@@ -37,6 +61,7 @@ export interface SmartContract {
   verified_twin_address_hash: string | null;
   minimal_proxy_address_hash: string | null;
   language: string | null;
+  license_type: SmartContractLicenseType | null;
 }
 
 export type SmartContractDecodedConstructorArg = [
@@ -53,49 +78,19 @@ export interface SmartContractExternalLibrary {
   name: string;
 }
 
-export interface SmartContractMethodBase {
-  inputs: Array<SmartContractMethodInput>;
-  outputs?: Array<SmartContractMethodOutput>;
-  constant: boolean;
-  name: string;
-  stateMutability: SmartContractMethodStateMutability;
-  type: 'function';
-  payable: boolean;
-  error?: string;
+export type SmartContractMethodOutputValue = string | boolean | object;
+export type SmartContractMethodOutput = AbiFunction['outputs'][number] & { value?: SmartContractMethodOutputValue };
+export type SmartContractMethodBase = Omit<AbiFunction, 'outputs'> & {
   method_id: string;
-}
-
+  outputs: Array<SmartContractMethodOutput>;
+  constant?: boolean;
+  error?: string;
+};
 export type SmartContractReadMethod = SmartContractMethodBase;
-
-export interface SmartContractWriteFallback {
-  payable?: true;
-  stateMutability: 'payable';
-  type: 'fallback';
-}
-
-export interface SmartContractWriteReceive {
-  payable?: true;
-  stateMutability: 'payable';
-  type: 'receive';
-}
-
-export type SmartContractWriteMethod = SmartContractMethodBase | SmartContractWriteFallback | SmartContractWriteReceive;
-
+export type SmartContractWriteMethod = SmartContractMethodBase | AbiFallback | AbiReceive;
 export type SmartContractMethod = SmartContractReadMethod | SmartContractWriteMethod;
 
-export interface SmartContractMethodInput {
-  internalType?: string; // there could be any string, e.g "enum MyEnum"
-  name: string;
-  type: SmartContractMethodArgType;
-  components?: Array<SmartContractMethodInput>;
-  fieldType?: 'native_coin';
-}
-
-export interface SmartContractMethodOutput extends SmartContractMethodInput {
-  value?: string | boolean | object;
-}
-
-export interface SmartContractQueryMethodReadSuccess {
+export interface SmartContractQueryMethodSuccess {
   is_error: false;
   result: {
     names: Array<string | [ string, Array<string> ]>;
@@ -106,7 +101,7 @@ export interface SmartContractQueryMethodReadSuccess {
   };
 }
 
-export interface SmartContractQueryMethodReadError {
+export interface SmartContractQueryMethodError {
   is_error: true;
   result: {
     code: number;
@@ -122,7 +117,7 @@ export interface SmartContractQueryMethodReadError {
   };
 }
 
-export type SmartContractQueryMethodRead = SmartContractQueryMethodReadSuccess | SmartContractQueryMethodReadError;
+export type SmartContractQueryMethod = SmartContractQueryMethodSuccess | SmartContractQueryMethodError;
 
 // VERIFICATION
 
@@ -136,6 +131,7 @@ export interface SmartContractVerificationConfigRaw {
   vyper_compiler_versions: Array<string>;
   vyper_evm_versions: Array<string>;
   is_rust_verifier_microservice_enabled: boolean;
+  license_types: Record<SmartContractLicenseType, number>;
 }
 
 export interface SmartContractVerificationConfig extends SmartContractVerificationConfigRaw {
@@ -160,6 +156,7 @@ export interface SmartContractVerificationError {
 
 export type SolidityscanReport = {
   scan_report: {
+    contractname: string;
     scan_status: string;
     scan_summary: {
       issue_severity_distribution: {

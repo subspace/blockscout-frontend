@@ -6,6 +6,8 @@ import type {
   SearchResultLabel,
   SearchResult,
   SearchResultUserOp,
+  SearchResultBlob,
+  SearchResultDomain,
 } from 'types/api/search';
 
 export const token1: SearchResultToken = {
@@ -116,6 +118,26 @@ export const userOp1: SearchResultUserOp = {
   url: '/op/0xcb560d77b0f3af074fa05c1e5c691bcdfe457e630062b5907e9e71fc74b2ec61',
 };
 
+export const blob1: SearchResultBlob = {
+  blob_hash: '0x0108dd3e414da9f3255f7a831afa606e8dfaea93d082dfa9b15305583cbbdbbe',
+  type: 'blob' as const,
+  timestamp: null,
+};
+
+export const domain1: SearchResultDomain = {
+  address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+  ens_info: {
+    address_hash: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+    expiry_date: '2039-09-01T07:36:18.000Z',
+    name: 'vitalik.eth',
+    names_count: 1,
+  },
+  is_smart_contract_verified: false,
+  name: null,
+  type: 'ens_domain',
+  url: '/address/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+};
+
 export const baseResponse: SearchResult = {
   items: [
     token1,
@@ -124,6 +146,8 @@ export const baseResponse: SearchResult = {
     address1,
     contract1,
     tx1,
+    blob1,
+    domain1,
   ],
   next_page_params: null,
 };
