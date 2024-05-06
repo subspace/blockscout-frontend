@@ -245,20 +245,6 @@ const TokenPageContent = () => {
   return (
     <>
       <TextAd mb={ 6 }/>
-      <PageTitle
-        title={ `${ tokenQuery.data?.name || 'Unnamed token' }${ tokenSymbolText }` }
-        isLoading={ isLoading }
-        backLink={ backLink }
-        beforeTitle={ tokenQuery.data ? (
-          <TokenEntity.Icon
-            token={ tokenQuery.data }
-            isLoading={ isLoading }
-            iconSize="lg"
-          />
-        ) : null }
-        contentAfter={ titleContentAfter }
-        secondRow={ titleSecondRow }
-      />
 
       <TokenPageTitle tokenQuery={ tokenQuery } addressQuery={ addressQuery }/>
 
