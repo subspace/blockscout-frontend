@@ -8,7 +8,7 @@ import type { CustomLinksGroup } from 'types/footerLinks';
 import config from 'configs/app';
 import type { ResourceError } from 'lib/api/resources';
 import useFetch from 'lib/hooks/useFetch';
-import useIssueUrl from 'lib/hooks/useIssueUrl';
+//import useIssueUrl from 'lib/hooks/useIssueUrl';
 import NetworkAddToWallet from 'ui/shared/NetworkAddToWallet';
 
 import FooterLinkItem from './FooterLinkItem';
@@ -18,6 +18,8 @@ import getApiVersionUrl from './utils/getApiVersionUrl';
 const MAX_LINKS_COLUMNS = 4;
 
 const Footer = () => {
+
+  const apiVersionUrl = getApiVersionUrl(config.UI.footer.frontendVersion);
 
   const BLOCKSCOUT_LINKS = [
     {
@@ -113,7 +115,7 @@ const Footer = () => {
         </Box>
       </Box>
     );
-  }, [ apiVersionUrl, backendVersionData?.backend_version, frontendLink ]);
+  }, [ apiVersionUrl, frontendLink ]);
 
   const containerProps: GridProps = {
     as: 'footer',
