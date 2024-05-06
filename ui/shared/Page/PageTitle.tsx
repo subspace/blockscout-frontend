@@ -3,8 +3,6 @@ import _debounce from 'lodash/debounce';
 import React from 'react';
 
 import useIsMobile from 'lib/hooks/useIsMobile';
-import TextAd from 'ui/shared/ad/TextAd';
-import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/LinkInternal';
 
 type BackLinkProp = { label: string; url: string } | { label: string; onClick: () => void };

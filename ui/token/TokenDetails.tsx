@@ -15,7 +15,6 @@ import useIsMounted from 'lib/hooks/useIsMounted';
 import { TOKEN_COUNTERS } from 'stubs/token';
 import type { TokenTabs } from 'ui/pages/Token';
 import DetailsInfoItem from 'ui/shared/DetailsInfoItem';
-import DetailsSponsoredItem from 'ui/shared/DetailsSponsoredItem';
 import TruncatedValue from 'ui/shared/TruncatedValue';
 
 import TokenNftMarketplaces from './TokenNftMarketplaces';

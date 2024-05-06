@@ -23,7 +23,6 @@ import { getTokenHoldersStub } from 'stubs/token';
 import { generateListStub } from 'stubs/utils';
 import AddressContract from 'ui/address/AddressContract';
 import AddressCsvExportLink from 'ui/address/AddressCsvExportLink';
-import TextAd from 'ui/shared/ad/TextAd';
 import IconSvg from 'ui/shared/IconSvg';
 import Pagination from 'ui/shared/pagination/Pagination';
 import useQueryWithPages from 'ui/shared/pagination/useQueryWithPages';
@@ -245,7 +244,6 @@ const TokenPageContent = () => {
 
   return (
     <>
-      <TextAd mb={ 6 }/>
 
       <TokenPageTitle tokenQuery={ tokenQuery } addressQuery={ addressQuery } hash={ hashString }/>
 

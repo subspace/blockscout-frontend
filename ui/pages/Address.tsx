@@ -31,17 +31,15 @@ import AddressWithdrawals from 'ui/address/AddressWithdrawals';
 import AddressFavoriteButton from 'ui/address/details/AddressFavoriteButton';
 import AddressQrCode from 'ui/address/details/AddressQrCode';
 import AddressEnsDomains from 'ui/address/ensDomains/AddressEnsDomains';
-import SolidityscanReport from 'ui/address/SolidityscanReport';
 import useAddressQuery from 'ui/address/utils/useAddressQuery';
+import SolidityscanReport from 'ui/address/SolidityscanReport';
 import AccountActionsMenu from 'ui/shared/AccountActionsMenu/AccountActionsMenu';
-import TextAd from 'ui/shared/ad/TextAd';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
-import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import EnsEntity from 'ui/shared/entities/ens/EnsEntity';
-import EntityTags from 'ui/shared/EntityTags/EntityTags';
+import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import formatUserTags from 'ui/shared/EntityTags/formatUserTags';
+import EntityTags from 'ui/shared/EntityTags/EntityTags';
 import sortEntityTags from 'ui/shared/EntityTags/sortEntityTags';
-import IconSvg from 'ui/shared/IconSvg';
 import NetworkExplorers from 'ui/shared/NetworkExplorers';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
@@ -273,7 +271,6 @@ const AddressPageContent = () => {
 
   return (
     <>
-      <TextAd mb={ 6 }/>
       <PageTitle
         title={ `${ addressQuery.data?.is_contract ? 'Contract' : 'Address' } details` }
         backLink={ backLink }
