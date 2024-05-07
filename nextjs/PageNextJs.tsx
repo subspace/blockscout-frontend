@@ -9,7 +9,6 @@ import useAdblockDetect from 'lib/hooks/useAdblockDetect';
 import useGetCsrfToken from 'lib/hooks/useGetCsrfToken';
 import * as metadata from 'lib/metadata';
 import * as mixpanel from 'lib/mixpanel';
-import { init as initSentry } from 'lib/sentry/config';
 
 interface Props<Pathname extends Route['pathname']> {
   pathname: Pathname;
@@ -18,7 +17,6 @@ interface Props<Pathname extends Route['pathname']> {
   apiData?: PageProps<Pathname>['apiData'];
 }
 
-initSentry();
 
 const PageNextJs = <Pathname extends Route['pathname']>(props: Props<Pathname>) => {
   const { title, description, opengraph } = metadata.generate(props, props.apiData);
@@ -32,23 +30,23 @@ const PageNextJs = <Pathname extends Route['pathname']>(props: Props<Pathname>) 
   return (
     <>
       <Head>
-        <title>{ title }</title>
-        <meta name="description" content={ description }/>
+        <title>{title}</title>
+        <meta name="description" content={description} />
 
-        { /* OG TAGS */ }
-        <meta property="og:title" content={ opengraph.title }/>
-        { opengraph.description && <meta property="og:description" content={ opengraph.description }/> }
-        <meta property="og:image" content={ opengraph.imageUrl }/>
-        <meta property="og:type" content="website"/>
+        { /* OG TAGS */}
+        <meta property="og:title" content={opengraph.title} />
+        {opengraph.description && <meta property="og:description" content={opengraph.description} />}
+        <meta property="og:image" content={opengraph.imageUrl} />
+        <meta property="og:type" content="website" />
 
-        { /* Twitter Meta Tags */ }
-        <meta name="twitter:card" content="summary_large_image"/>
-        <meta property="twitter:domain" content={ config.app.host }/>
-        <meta name="twitter:title" content={ opengraph.title }/>
-        { opengraph.description && <meta name="twitter:description" content={ opengraph.description }/> }
-        <meta property="twitter:image" content={ opengraph.imageUrl }/>
+        { /* Twitter Meta Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content={config.app.host} />
+        <meta name="twitter:title" content={opengraph.title} />
+        {opengraph.description && <meta name="twitter:description" content={opengraph.description} />}
+        <meta property="twitter:image" content={opengraph.imageUrl} />
       </Head>
-      { props.children }
+      {props.children}
     </>
   );
 };

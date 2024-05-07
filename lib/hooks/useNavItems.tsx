@@ -54,12 +54,12 @@ export default function useNavItems(): ReturnType {
     } : null;
 
     const verifiedContracts: NavItem | null =
-     {
-       text: 'Verified contracts',
-       nextRoute: { pathname: '/verified-contracts' as const },
-       icon: 'verified',
-       isActive: pathname === '/verified-contracts',
-     };
+    {
+      text: 'Verified contracts',
+      nextRoute: { pathname: '/verified-contracts' as const },
+      icon: 'verified',
+      isActive: pathname === '/verified-contracts',
+    };
     const ensLookup = config.features.nameService.isEnabled ? {
       text: 'Name services lookup',
       nextRoute: { pathname: '/name-domains' as const },
@@ -73,13 +73,13 @@ export default function useNavItems(): ReturnType {
       isActive: pathname === '/validators',
     } : null;
     const rollupDeposits = {
-      text: `Deposits (L1${ rightLineArrow }L2)`,
+      text: `Deposits (L1${rightLineArrow}L2)`,
       nextRoute: { pathname: '/deposits' as const },
       icon: 'arrows/south-east',
       isActive: pathname === '/deposits',
     };
     const rollupWithdrawals = {
-      text: `Withdrawals (L2${ rightLineArrow }L1)`,
+      text: `Withdrawals (L2${rightLineArrow}L1)`,
       nextRoute: { pathname: '/withdrawals' as const },
       icon: 'arrows/north-east',
       isActive: pathname === '/withdrawals',
@@ -182,7 +182,7 @@ export default function useNavItems(): ReturnType {
       } : null,
       {
         text: 'Developer Docs',
-        icon: rocket,
+        icon: 'rocket',
         url: 'https://docs.subspace.network/docs/developers/intro',
       },
     ].filter(Boolean);
@@ -284,5 +284,5 @@ export default function useNavItems(): ReturnType {
     };
 
     return { mainNavItems, accountNavItems, profileItem };
-  }, [ pathname ]);
+  }, [pathname]);
 }
