@@ -17,9 +17,6 @@ import getApiVersionUrl from './utils/getApiVersionUrl';
 
 const MAX_LINKS_COLUMNS = 4;
 
-const FRONT_VERSION_URL = `https://github.com/blockscout/frontend/tree/${ config.UI.footer.frontendVersion }`;
-const FRONT_COMMIT_URL = `https://github.com/blockscout/frontend/commit/${ config.UI.footer.frontendCommit }`;
-
 const Footer = () => {
 
   const apiVersionUrl = getApiVersionUrl(config.UI.footer.frontendVersion);
@@ -44,9 +41,9 @@ const Footer = () => {
       url: 'https://github.com/subspace',
     },
     {
-      icon: 'social/tweet' as const,
+      icon: 'social/twitter' as const,
       iconSize: '18px',
-      text: 'Twitter',
+      text: 'X (ex-Twitter)',
       url: 'https://twitter.com/NetworkSubspace',
     },
     {
@@ -112,22 +109,10 @@ const Footer = () => {
   const renderProjectInfo = React.useCallback((gridArea?: GridProps['gridArea']) => {
     return (
       <Box gridArea={ gridArea }>
-        <Link fontSize="xs" href="https://www.blockscout.com">blockscout.com</Link>
         <Text mt={ 3 } fontSize="xs">
           Blockscout is a tool for inspecting and analyzing EVM based blockchains. Blockchain explorer for Ethereum Networks.
-        </Text>
-        <VStack spacing={ 1 } mt={ 6 } alignItems="start">
-          { apiVersionUrl && (
-            <Text fontSize="xs">
-              Backend: <Link href={ apiVersionUrl } target="_blank">{ config.UI.footer.frontendVersion }</Link>
-            </Text>
-          ) }
-          { frontendLink && (
-            <Text fontSize="xs">
-              Frontend: { frontendLink }
-            </Text>
-          ) }
-        </VStack>
+          <Link fontSize="xs" href="https://subspace.network/">Subspace Network</Link>
+        </Box>
       </Box>
     );
   }, [ apiVersionUrl, frontendLink ]);

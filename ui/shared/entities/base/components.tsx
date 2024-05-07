@@ -18,7 +18,9 @@ export type Truncation = 'constant' | 'constant_long' | 'dynamic' | 'tail' | 'no
 export interface EntityBaseProps {
   className?: string;
   href?: string;
+  iconName?: IconName;
   iconSize?: IconSize;
+  iconColor?: IconProps['color'];
   isExternal?: boolean;
   isLoading?: boolean;
   noCopy?: boolean;

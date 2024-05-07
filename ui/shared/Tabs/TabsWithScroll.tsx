@@ -25,6 +25,7 @@ export interface Props extends ThemingProps<'Tabs'> {
   stickyEnabled?: boolean;
   onTabChange?: (index: number) => void;
   defaultTabIndex?: number;
+  isLoading?: boolean;
   className?: string;
 }
 
@@ -37,6 +38,7 @@ const TabsWithScroll = ({
   stickyEnabled,
   onTabChange,
   defaultTabIndex,
+  isLoading,
   className,
   ...themeProps
 }: Props) => {
@@ -50,8 +52,11 @@ const TabsWithScroll = ({
   }, [ tabs ]);
 
   const handleTabChange = React.useCallback((index: number) => {
+    if (isLoading) {
+      return;
+    }
     onTabChange ? onTabChange(index) : setActiveTabIndex(index);
-  }, [ onTabChange ]);
+  }, [ isLoading, onTabChange ]);
 
   useEffect(() => {
     if (defaultTabIndex !== undefined) {
@@ -89,10 +94,12 @@ const TabsWithScroll = ({
       lazyBehavior={ lazyBehavior }
     >
       <AdaptiveTabsList
-        // the easiest and most readable way to achieve correct tab's cut recalculation when screen is resized
+        // the easiest and most readable way to achieve correct tab's cut recalculation when
+        //    - screen is resized or
+        //    - tabs list is changed when API data is loaded
         // is to do full re-render of the tabs list
-        // so we use screenWidth as a key for the TabsList component
-        key={ screenWidth }
+        // so we use screenWidth + tabIds as a key for the TabsList component
+        key={ screenWidth + '_' + tabsList.map((tab) => tab.id).join(':') }
         tabs={ tabs }
         tabListProps={ tabListProps }
         rightSlot={ rightSlot }
@@ -101,6 +108,7 @@ const TabsWithScroll = ({
         activeTabIndex={ activeTabIndex }
         onItemClick={ handleTabChange }
         themeProps={ themeProps }
+        isLoading={ isLoading }
       />
       <TabPanels>
         { tabsList.map((tab) => <TabPanel padding={ 0 } key={ tab.id }>{ tab.component }</TabPanel>) }

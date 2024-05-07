@@ -22,11 +22,13 @@ SocketMessage.AddressTokenBalance |
 SocketMessage.AddressTokenBalancesErc20 |
 SocketMessage.AddressTokenBalancesErc721 |
 SocketMessage.AddressTokenBalancesErc1155 |
+SocketMessage.AddressTokenBalancesErc404 |
 SocketMessage.AddressCoinBalance |
 SocketMessage.AddressTxs |
 SocketMessage.AddressTxsPending |
 SocketMessage.AddressTokenTransfer |
 SocketMessage.AddressChangedBytecode |
+SocketMessage.AddressFetchedBytecode |
 SocketMessage.SmartContractWasVerified |
 SocketMessage.TokenTransfers |
 SocketMessage.TokenTotalSupply |
@@ -57,11 +59,13 @@ export namespace SocketMessage {
   export type AddressTokenBalancesErc20 = SocketMessageParamsGeneric<'updated_token_balances_erc_20', AddressTokensBalancesSocketMessage>;
   export type AddressTokenBalancesErc721 = SocketMessageParamsGeneric<'updated_token_balances_erc_721', AddressTokensBalancesSocketMessage>;
   export type AddressTokenBalancesErc1155 = SocketMessageParamsGeneric<'updated_token_balances_erc_1155', AddressTokensBalancesSocketMessage>;
+  export type AddressTokenBalancesErc404 = SocketMessageParamsGeneric<'updated_token_balances_erc_404', AddressTokensBalancesSocketMessage>;
   export type AddressCoinBalance = SocketMessageParamsGeneric<'coin_balance', { coin_balance: AddressCoinBalanceHistoryItem }>;
   export type AddressTxs = SocketMessageParamsGeneric<'transaction', { transactions: Array<Transaction> }>;
   export type AddressTxsPending = SocketMessageParamsGeneric<'pending_transaction', { transactions: Array<Transaction> }>;
   export type AddressTokenTransfer = SocketMessageParamsGeneric<'token_transfer', { token_transfers: Array<TokenTransfer> }>;
   export type AddressChangedBytecode = SocketMessageParamsGeneric<'changed_bytecode', Record<string, never>>;
+  export type AddressFetchedBytecode = SocketMessageParamsGeneric<'fetched_bytecode', { fetched_bytecode: string }>;
   export type SmartContractWasVerified = SocketMessageParamsGeneric<'smart_contract_was_verified', Record<string, never>>;
   export type TokenTransfers = SocketMessageParamsGeneric<'token_transfer', {token_transfer: number }>;
   export type TokenTotalSupply = SocketMessageParamsGeneric<'total_supply', {total_supply: number }>;

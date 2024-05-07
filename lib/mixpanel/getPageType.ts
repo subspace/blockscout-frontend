@@ -35,6 +35,7 @@ export const PAGE_TYPE_DICT: Record<Route['pathname'], string> = {
   '/output-roots': 'Output roots',
   '/batches': 'Tx batches (L2 blocks)',
   '/batches/[number]': 'L2 tx batch details',
+  '/blobs/[hash]': 'Blob details',
   '/ops': 'User operations',
   '/op/[hash]': 'User operation details',
   '/404': '404',
@@ -45,6 +46,8 @@ export const PAGE_TYPE_DICT: Record<Route['pathname'], string> = {
 
   // service routes, added only to make typescript happy
   '/login': 'Login',
+  '/api/metrics': 'Node API: Prometheus metrics',
+  '/api/log': 'Node API: Request log',
   '/api/media-type': 'Node API: Media type',
   '/api/proxy': 'Node API: Proxy',
   '/api/csrf': 'Node API: CSRF token',

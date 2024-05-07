@@ -5,8 +5,6 @@ import type { TokenInfo, TokenInstance } from 'types/api/token';
 
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import DetailsInfoItem from 'ui/shared/DetailsInfoItem';
-import DetailsInfoItemDivider from 'ui/shared/DetailsInfoItemDivider';
-// import DetailsSponsoredItem from 'ui/shared/DetailsSponsoredItem';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import HashStringShortenDynamic from 'ui/shared/HashStringShortenDynamic';
 import NftMedia from 'ui/shared/nft/NftMedia';
@@ -74,7 +72,8 @@ const TokenInstanceDetails = ({ data, token, scrollRef, isLoading }: Props) => {
           <TokenNftMarketplaces isLoading={ isLoading } hash={ token.address } id={ data.id }/>
         </Grid>
         <NftMedia
-          url={ data.animation_url || data.image_url }
+          animationUrl={ data.animation_url }
+          imageUrl={ data.image_url }
           w="250px"
           flexShrink={ 0 }
           alignSelf={{ base: 'center', lg: 'flex-start' }}

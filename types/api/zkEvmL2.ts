@@ -1,11 +1,47 @@
 import type { Transaction } from './transaction';
 
+export type ZkEvmL2DepositsItem = {
+  block_number: number;
+  index: number;
+  l1_transaction_hash: string;
+  l2_transaction_hash: string | null;
+  timestamp: string;
+  value: string;
+  symbol: string;
+}
+
+export type ZkEvmL2DepositsResponse = {
+  items: Array<ZkEvmL2DepositsItem>;
+  next_page_params: {
+    items_count: number;
+    index: number;
+  };
+}
+
+export type ZkEvmL2WithdrawalsItem = {
+  block_number: number;
+  index: number;
+  l1_transaction_hash: string | null;
+  l2_transaction_hash: string;
+  timestamp: string;
+  value: string;
+  symbol: string;
+}
+
+export type ZkEvmL2WithdrawalsResponse = {
+  items: Array<ZkEvmL2WithdrawalsItem>;
+  next_page_params: {
+    items_count: number;
+    index: number;
+  };
+}
+
 export type ZkEvmL2TxnBatchesItem = {
   number: number;
   verify_tx_hash: string | null;
   sequence_tx_hash: string | null;
   status: string;
-  timestamp: string;
+  timestamp: string | null;
   tx_count: number;
 }
 
@@ -26,7 +62,7 @@ export type ZkEvmL2TxnBatch = {
   sequence_tx_hash: string;
   state_root: string;
   status: typeof ZKEVM_L2_TX_BATCH_STATUSES[number];
-  timestamp: string;
+  timestamp: string | null;
   transactions: Array<string>;
   verify_tx_hash: string;
 }
